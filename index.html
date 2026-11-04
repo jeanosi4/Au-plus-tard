@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Au plus tard</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap">
+<style>
+:root{--bg:#eef2f6;--card:#fff;--ink:#14213d;--mute:#5b677d;--line:#d5dce6;--late:#c1121f;--soon:#b36b00;--ok:#1f7a6f;--btn:#14213d;--btnt:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0f1624;--card:#18223a;--ink:#e8edf7;--mute:#9aa7c0;--line:#2b3856;--late:#ff6b6b;--soon:#f2b441;--ok:#4cc9b0;--btn:#e8edf7;--btnt:#0f1624}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0f1624;--card:#18223a;--ink:#e8edf7;--mute:#9aa7c0;--line:#2b3856;--late:#ff6b6b;--soon:#f2b441;--ok:#4cc9b0;--btn:#e8edf7;--btnt:#0f1624}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.45}
+main{max-width:620px;margin:0 auto;padding:24px 16px 48px}
+.top{display:flex;gap:8px;justify-content:flex-end;margin-bottom:10px}
+.top select{width:auto;padding:6px 8px;font-size:.9rem}
+h1{font-size:2rem;font-weight:800;letter-spacing:-.02em;margin:0 0 4px}
+.sub{color:var(--mute);margin:0 0 20px}
+.stats{display:flex;gap:10px;margin-bottom:20px}
+.stat{flex:1;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.stat b{display:block;font-size:1.6rem;font-weight:800}
+.stat span{color:var(--mute);font-size:.85rem}
+form{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
+form .full{grid-column:1/-1}
+label{display:flex;flex-direction:column;font-size:.82rem;color:var(--mute);gap:4px}
+input,select{font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;width:100%}
+button{font:inherit;cursor:pointer}
+.add{background:var(--btn);color:var(--btnt);border:0;border-radius:10px;padding:12px;font-weight:600}
+:focus-visible{outline:3px solid var(--soon);outline-offset:2px}
+.item{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-inline-start:6px solid var(--ok);border-radius:14px;padding:12px 14px;margin-bottom:10px}
+.item.soon{border-inline-start-color:var(--soon)}.item.late{border-inline-start-color:var(--late)}
+.count{min-width:64px;text-align:center;font-weight:800;font-size:1.5rem;line-height:1.1;color:var(--ok)}
+.soon .count{color:var(--soon)}.late .count{color:var(--late)}
+.count small{display:block;font-size:.72rem;font-weight:400;color:var(--mute)}
+.info{flex:1;min-width:0}
+.info strong{display:block;overflow-wrap:anywhere}
+.info span{color:var(--mute);font-size:.85rem}
+.acts{display:flex;flex-direction:column;gap:6px}
+.acts a{text-align:center;text-decoration:none}
+.acts a,.acts button{background:none;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:5px 9px;font-size:.8rem;display:block}
+.quota{color:var(--mute);font-size:.85rem;margin:-8px 0 14px}
+.up{display:none;background:var(--card);border:2px solid var(--soon);border-radius:14px;padding:14px;margin-bottom:16px}.up.on{display:block}.up p{margin:0 0 10px}
+.up a.pay{display:block;text-align:center;background:var(--btn);color:var(--btnt);border-radius:10px;padding:12px;font-weight:600;text-decoration:none;margin-bottom:10px}
+.up .row{display:flex;gap:8px}.up .add{width:auto;padding:10px 16px}
+.empty{text-align:center;color:var(--mute);padding:28px 10px;border:2px dashed var(--line);border-radius:14px}
+.tip{color:var(--mute);font-size:.82rem;margin-top:22px}
+</style>
+</head>
+<body>
+<main>
+<div class="top">
+<select id="lg" aria-label="Langue / Language"><option value="fr">Français</option><option value="en">English</option><option value="es">Español</option><option value="pt">Português</option><option value="ar">العربية</option></select>
+<select id="cu" aria-label="Devise / Currency"><option value="EUR">€ EUR</option><option value="USD">$ USD</option><option value="XOF">FCFA</option><option value="GBP">£ GBP</option><option value="CAD">$ CAD</option><option value="NGN">₦ NGN</option><option value="MAD">MAD</option><option value="BRL">R$ BRL</option></select>
+</div>
+<h1>Au plus tard</h1>
+<p class="sub" data-t="sub"></p>
+<div class="stats">
+<div class="stat"><b id="s1">0</b><span data-t="s1"></span></div>
+<div class="stat"><b id="s2">0</b><span data-t="s2"></span></div>
+</div>
+<p class="quota" id="q"></p>
+<div class="up" id="up"><p><strong data-t="upT"></strong></p><p id="upd"></p><a class="pay" id="pay" target="_blank" rel="noopener" data-t="upB"></a><div class="row"><input id="cd" data-ph="upC" autocomplete="off"><button class="add" id="act" type="button" data-t="upA"></button></div><p class="tip" id="cm"></p></div>
+<form id="f">
+<label class="full"><span data-t="what"></span><input id="n" required maxlength="60" data-ph="ph"></label>
+<label><span data-t="due"></span><input id="d" type="date" required></label>
+<label><span data-t="type"></span><select id="c"></select></label>
+<label><span data-t="cost"></span><input id="m" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0"></label>
+<label><span data-t="rep"></span><select id="r"></select></label>
+<button class="add full" type="submit" data-t="add"></button>
+</form>
+<div id="list"></div>
+<p class="tip" id="sy"></p>
+</main>
+<script>
+var K="aplt-items",S="aplt-set",items=[],set={},ref=null,synced=false;
+var CFG={PRICE:"1 950 FCFA (3 €)",PRICEY:"19 500 FCFA (30 €)",WA:"22893022266",FREE:3,CODESY:["29539fe3d97d9351b7382e9abf667a5b13b8cd43502806d18c5ac8191c23624e","0d469201f0ac20c36d6b35998b4c8a29309788a6069da7e07fc216152b959b1d","b7db43b44294b9aeab61dd30b4f48fc8cb6a27784d3b4590a76c11c7f7490cde","72432d177e5f3075a3f97033c00b099e5f475568d4e000370f1f4d585854c393","5061610188255fb831296fddb46da35f8809927ba48fe6d953b64f64176a4384","ed192723ca8f77030bf76d64a30477e73309fd5d8faf309c1ad0783a3cb93f4b","63b8e19a24ac75ca34c01c54070f681e99f9a4c5f01ea60d6d9097293df18801","9ede838212f69d80c78ed0d6bb617dd1eaa19190b8d031170e78d8dcb52834e3","24f5574338fc20f7c73a3efa15ee9e766843e0680b178bf482d0bbfe3cff9d5e","15538dea36917a8f2d3004ccf296f8c2e63351cd4c902080d0dbfd8425ccd0d0"],CODES:["e032e561673b920c0d13580a8f93501c2e09f22525d70ac7e96aff7aab9ccad2","f691cf4c65eeadda1a35d7104d2c9c6cd953641832cbba8770e551f098fce3fc","292d80c4a8a3aa051eb89eb5da750616c2e9d5474b4082e1d1e515ccee54496a","ce4bb1b60e009b980c5a8202adfeb0e5f8a812e7a81951e353bfe4cd4c12bdcb","1523143c0a21e03d0a510fd2136a7ae9cbae4a49fa904c98f2a3853d952f4f58","eb827b52c64da3779ace0f1450c4b1fc0cdc5c8b7f478ca612f44f1c932891e0","2ebc3d229b1d53de30b6493df8e63cb72de20148eca12cc81d10385170eaa7a7","4b134c3db76da89d47808244d3fe44213d39b4ecb443cafc93f92265ef27bf4b","5cda0ef147856e3de2fd7d7b4a6b5186a79333047a97081d68891a9b4f206655","e5db1d050f77e0c10c2ff45915a1245f699e226a05385b2eaf5677b247389363","14a6a7264aeb3f9f0ab620e2ae99552945be8029953f0213eb27e4a1a8ec76d7","4fde970fbffdf139b6ef3970bd83d126254d3f2007352b7231aad67270f881f1","822217af593d85baebf7758f9eaf20cb5305185cae24fce8cb83d6c68abcebef","328a7174385afc94c71654b027e8a5eab65ea75da46850c3b7e92cb39f4919d2","573769f588567ceefdf94fa3d58fbeacd6907ba2c82928b222c246c992171f41","ebd6c02154ee4f20fb00ad5a1ec68820483a4bc6b1a1b2b5276f32bf545f484f","890f7c8c30c7de9cb1371500a838a8692cd7c49d716f2ca5de9f8e4b60c85d3e","ef02c23811aaf8ba2d9f83ea001411d51426b86538e8b4ecd2874ebd82a04b17","d3fe9e6a58293eb57f6c22df3ceb8254910a5b150f6554c33b071607b37ca93b","115ab607a8edcd159711f354780fec63883b181e40f883c2da10ea1880e2049a","474fe0049793bea3bdb6703818fbd60edcb4a1626560db802026ac970a9f7b77","22068f1637b6dc6b1db18dcb41d0b6004753f528cb4c6e89cb686bbaac12d416","24ac6b72d2128254883a522a0850a19eec2507212e05c5d128d79ec51013458e","ee35af8a30a5960cf1ffc10299e864f94502413d408f41f46d8ac49c75713386","6a51635d076784e8a4768501b1f4bce35451cb62c8de09c18993a1c4b72d7f60","59a629855d72cddd523631e5d10c00246f6b7cb6c6ccde70350b739af520a993","93057af43302c791cc5a999678526f3ccf772b8236a31517e4621756b55a0db4","9b7bb4c03c686251187043583b9c534ca23572e3e85364d8a9a2ff0258cb2987","96f4d4026328c4cade917f63d7f00d1c3524602167184ed3b0a8660dc8af255f","c1fe0d16e64026423cc478df1a21c6927d22b7e56d8d39cdd595aeec9c0c7229"]};
+function pro(){try{return Date.now()<+localStorage.getItem("aplt-pro")}catch(e){return false}}
+var LOC={fr:"fr-FR",en:"en-US",es:"es-ES",pt:"pt-BR",ar:"ar-u-nu-latn"};
+var CK=["doc","abo","ass","gar","imp","aut"];var T={
+fr:{sub:"Passeport, assurance, abonnements, garanties : note chaque échéance une fois, ne l’oublie plus.",s1:"à traiter sous 30 jours",s2:"d’abonnements par mois",what:"Quoi ?",ph:"Ex. : Renouveler ma carte d’identité",due:"Date limite",type:"Type",cost:"Coût mensuel (optionnel)",rep:"Se répète",r0:"Non",r1:"Chaque mois",r12:"Chaque année",add:"Ajouter l’échéance",done:"Fait",renew:"Renouvelé",del:"Supprimer",cal:"Calendrier",late:"jours de retard",today:"aujourd’hui",day:"jour",days:"jours",mo:"mois",empty:"Aucune échéance pour l’instant. Ajoute la première : celle que tu as peur d’oublier.",tip:"Tes données restent dans ce navigateur. Le bouton Calendrier ajoute l’échéance avec un rappel dans Google Agenda.",tipS:"Synchronisé entre tes appareils via ton compte Claude. Le bouton Calendrier ajoute l’échéance avec un rappel dans Google Agenda.",doc:"Document",abo:"Abonnement",ass:"Assurance",gar:"Garantie",imp:"Impôts, factures",aut:"Autre",quota:"{n}/3 échéances gratuites utilisées",pro:"Premium actif : échéances illimitées",upT:"Tu as atteint la limite gratuite",upD:"Passe à Premium ({p}/mois ou {y}/an) pour des échéances illimitées. Paie par mobile money, puis reçois ton code d’activation.",upB:"Payer et recevoir mon code",upC:"Code d’activation",upA:"Activer",bad:"Code invalide. Vérifie-le et réessaie.",waMsg:"Bonjour, je veux Premium pour Au plus tard :"},
+en:{sub:"Passport, insurance, subscriptions, warranties: log each deadline once and never forget it.",s1:"due within 30 days",s2:"in subscriptions per month",what:"What?",ph:"E.g. Renew my ID card",due:"Deadline",type:"Type",cost:"Monthly cost (optional)",rep:"Repeats",r0:"No",r1:"Every month",r12:"Every year",add:"Add deadline",done:"Done",renew:"Renewed",del:"Delete",cal:"Calendar",late:"days overdue",today:"today",day:"day",days:"days",mo:"month",empty:"No deadlines yet. Add the first one: the one you’re afraid to forget.",tip:"Your data stays in this browser. The Calendar button adds the deadline with a reminder in Google Calendar.",tipS:"Synced across your devices through your Claude account. The Calendar button adds the deadline with a reminder in Google Calendar.",doc:"Document",abo:"Subscription",ass:"Insurance",gar:"Warranty",imp:"Taxes, bills",aut:"Other",quota:"{n}/3 free deadlines used",pro:"Premium active: unlimited deadlines",upT:"You’ve reached the free limit",upD:"Go Premium ({p}/month or {y}/year) for unlimited deadlines. Pay by mobile money, then get your activation code.",upB:"Pay and get my code",upC:"Activation code",upA:"Activate",bad:"Invalid code. Check it and try again.",waMsg:"Hello, I want Premium for Au plus tard:"},
+es:{sub:"Pasaporte, seguro, suscripciones, garantías: anota cada fecha límite una vez y no la olvides.",s1:"para los próximos 30 días",s2:"en suscripciones al mes",what:"¿Qué?",ph:"Ej.: Renovar mi documento de identidad",due:"Fecha límite",type:"Tipo",cost:"Coste mensual (opcional)",rep:"Se repite",r0:"No",r1:"Cada mes",r12:"Cada año",add:"Añadir fecha límite",done:"Hecho",renew:"Renovado",del:"Eliminar",cal:"Calendario",late:"días de retraso",today:"hoy",day:"día",days:"días",mo:"mes",empty:"Aún no hay fechas límite. Añade la primera: la que temes olvidar.",tip:"Tus datos se quedan en este navegador. El botón Calendario añade la fecha con un recordatorio en Google Calendar.",tipS:"Sincronizado entre tus dispositivos con tu cuenta de Claude. El botón Calendario añade la fecha con un recordatorio en Google Calendar.",doc:"Documento",abo:"Suscripción",ass:"Seguro",gar:"Garantía",imp:"Impuestos, facturas",aut:"Otro",quota:"{n}/3 fechas gratuitas usadas",pro:"Premium activo: fechas ilimitadas",upT:"Has llegado al límite gratuito",upD:"Pásate a Premium ({p}/mes o {y}/año) para tener fechas ilimitadas. Paga con dinero móvil y recibe tu código de activación.",upB:"Pagar y recibir mi código",upC:"Código de activación",upA:"Activar",bad:"Código no válido. Revísalo e inténtalo de nuevo.",waMsg:"Hola, quiero Premium para Au plus tard:"},
+pt:{sub:"Passaporte, seguro, assinaturas, garantias: anote cada prazo uma vez e nunca mais o esqueça.",s1:"nos próximos 30 dias",s2:"em assinaturas por mês",what:"O quê?",ph:"Ex.: Renovar meu documento de identidade",due:"Prazo",type:"Tipo",cost:"Custo mensal (opcional)",rep:"Repete",r0:"Não",r1:"Todo mês",r12:"Todo ano",add:"Adicionar prazo",done:"Feito",renew:"Renovado",del:"Excluir",cal:"Calendário",late:"dias de atraso",today:"hoje",day:"dia",days:"dias",mo:"mês",empty:"Nenhum prazo ainda. Adicione o primeiro: aquele que você tem medo de esquecer.",tip:"Seus dados ficam neste navegador. O botão Calendário adiciona o prazo com um lembrete no Google Agenda.",tipS:"Sincronizado entre seus dispositivos pela sua conta Claude. O botão Calendário adiciona o prazo com um lembrete no Google Agenda.",doc:"Documento",abo:"Assinatura",ass:"Seguro",gar:"Garantia",imp:"Impostos, contas",aut:"Outro",quota:"{n}/3 prazos gratuitos usados",pro:"Premium ativo: prazos ilimitados",upT:"Você atingiu o limite gratuito",upD:"Assine o Premium ({p}/mês ou {y}/ano) para prazos ilimitados. Pague por dinheiro móvel e receba seu código de ativação.",upB:"Pagar e receber meu código",upC:"Código de ativação",upA:"Ativar",bad:"Código inválido. Confira e tente de novo.",waMsg:"Olá, quero o Premium do Au plus tard:"},
+ar:{sub:"جواز السفر، التأمين، الاشتراكات، الضمانات: سجّل كل موعد مرة واحدة ولا تنسَه أبدًا.",s1:"خلال 30 يومًا",s2:"اشتراكات شهريًا",what:"ماذا؟",ph:"مثال: تجديد بطاقة الهوية",due:"الموعد النهائي",type:"النوع",cost:"التكلفة الشهرية (اختياري)",rep:"التكرار",r0:"لا",r1:"كل شهر",r12:"كل سنة",add:"إضافة موعد",done:"تم",renew:"تم التجديد",del:"حذف",cal:"التقويم",late:"أيام تأخير",today:"اليوم",day:"يوم",days:"أيام",mo:"شهر",empty:"لا توجد مواعيد بعد. أضف أول موعد: الذي تخشى نسيانه.",tip:"تبقى بياناتك في هذا المتصفح. زر التقويم يضيف الموعد مع تذكير في تقويم Google.",tipS:"تتم مزامنة بياناتك بين أجهزتك عبر حساب Claude. زر التقويم يضيف الموعد مع تذكير في تقويم Google.",doc:"وثيقة",abo:"اشتراك",ass:"تأمين",gar:"ضمان",imp:"ضرائب وفواتير",aut:"أخرى",quota:"{n}/3 مواعيد مجانية مستخدمة",pro:"Premium مفعّل: مواعيد غير محدودة",upT:"وصلت إلى الحد المجاني",upD:"اشترك في Premium ({p}/شهر أو {y}/سنة) للحصول على مواعيد غير محدودة. ادفع عبر المحفظة الإلكترونية ثم احصل على رمز التفعيل.",upB:"ادفع واحصل على الرمز",upC:"رمز التفعيل",upA:"تفعيل",bad:"الرمز غير صالح. تحقق منه وحاول مجددًا.",waMsg:"مرحبًا، أريد Premium لتطبيق Au plus tard:"}};
+try{items=JSON.parse(localStorage.getItem(K)||"[]")}catch(e){items=[]}
+try{set=JSON.parse(localStorage.getItem(S)||"{}")}catch(e){set={}}
+var nl=(navigator.language||"en").slice(0,2).toLowerCase();
+if(!T[set.lang])set.lang=T[nl]?nl:"en";
+if(!set.cur)set.cur=set.lang==="en"?"USD":"EUR";
+function tr(k){return T[set.lang][k]}
+function save(){try{localStorage.setItem(K,JSON.stringify(items))}catch(e){}if(ref)ref.set({json:JSON.stringify(items)}).catch(function(){})}
+function saveSet(){try{localStorage.setItem(S,JSON.stringify(set))}catch(e){}}
+function days(s){var t=new Date();t.setHours(0,0,0,0);return Math.round((new Date(s+"T00:00:00")-t)/864e5)}
+function addM(s,n){var d=new Date(s+"T00:00:00");d.setMonth(d.getMonth()+n);var p=function(x){return String(x).padStart(2,"0")};return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate())}
+function esc(t){var e=document.createElement("div");e.textContent=t;return e.innerHTML}
+function fmt(s){return new Date(s+"T00:00:00").toLocaleDateString(LOC[set.lang],{day:"numeric",month:"long",year:"numeric"})}
+function money(v,z){try{return new Intl.NumberFormat(LOC[set.lang],{style:"currency",currency:set.cur,maximumFractionDigits:z?0:(set.cur==="XOF"?0:2)}).format(v)}catch(e){return v+" "+set.cur}}
+function gcal(it){var p=function(x){return String(x).padStart(2,"0")},e=new Date(it.date+"T00:00:00");e.setDate(e.getDate()+1);
+var a=it.date.replace(/-/g,""),b=e.getFullYear()+p(e.getMonth()+1)+p(e.getDate());
+return "https://calendar.google.com/calendar/render?action=TEMPLATE&hl="+set.lang+"&text="+encodeURIComponent(it.name)+"&dates="+a+"/"+b+(it.rep===12?"&recur=RRULE:FREQ=YEARLY":it.rep===1?"&recur=RRULE:FREQ=MONTHLY":"")}
+function fill(id,vals){var s=document.getElementById(id),v=s.value;s.innerHTML=vals.map(function(x){return '<option value="'+x[0]+'">'+x[1]+'</option>'}).join("");if(v)s.value=v}
+function apply(){
+document.documentElement.lang=set.lang;document.documentElement.dir=set.lang==="ar"?"rtl":"ltr";
+document.querySelectorAll("[data-t]").forEach(function(e){e.textContent=tr(e.dataset.t)});
+document.querySelectorAll("[data-ph]").forEach(function(e){e.placeholder=tr(e.dataset.ph)});
+fill("c",CK.map(function(k){return [k,tr(k)]}));
+fill("r",[["0",tr("r0")],["1",tr("r1")],["12",tr("r12")]]);
+var pl=document.getElementById("pay");if(CFG.WA){pl.href="https://wa.me/"+CFG.WA+"?text="+encodeURIComponent(tr("waMsg")+" "+CFG.PRICE+" / "+CFG.PRICEY)}else{pl.style.display="none"}
+document.getElementById("upd").textContent=tr("upD").replace("{p}",CFG.PRICE).replace("{y}",CFG.PRICEY);
+document.getElementById("lg").value=set.lang;document.getElementById("cu").value=set.cur;
+document.getElementById("sy").textContent=synced?tr("tipS"):tr("tip");
+render()}
+function render(){
+items.sort(function(a,b){return a.date<b.date?-1:1});
+var h="",soon=0,cost=0;
+items.forEach(function(it,i){
+var n=days(it.date),cl=n<0?"late":n<=30?"soon":"";
+if(n<=30)soon++;
+if(it.cost)cost+=it.cost;
+var big=n<0?Math.abs(n):n,lab=n<0?tr("late"):n===0?tr("today"):n===1?tr("day"):tr("days");
+if(n===0)big="!";
+h+='<div class="item '+cl+'"><div class="count">'+big+'<small>'+lab+'</small></div><div class="info"><strong>'+esc(it.name)+'</strong><span>'+tr(it.cat)+' · '+fmt(it.date)+(it.cost?' · '+money(it.cost)+'/'+tr("mo"):'')+'</span></div><div class="acts">'+
+(it.rep?'<button data-a="renew" data-i="'+i+'">'+tr("renew")+'</button>':'<button data-a="done" data-i="'+i+'">'+tr("done")+'</button>')+
+'<a target="_blank" rel="noopener" href="'+gcal(it)+'">'+tr("cal")+'</a><button data-a="del" data-i="'+i+'">'+tr("del")+'</button></div></div>'});
+if(!items.length)h='<div class="empty">'+tr("empty")+'</div>';
+document.getElementById("list").innerHTML=h;
+document.getElementById("s1").textContent=soon;
+document.getElementById("s2").textContent=money(cost,1);
+var q=document.getElementById("q");q.textContent=pro()?tr("pro"):tr("quota").replace("{n}",items.length);if(pro())document.getElementById("up").classList.remove("on")}
+document.getElementById("lg").addEventListener("change",function(){set.lang=this.value;saveSet();apply()});
+document.getElementById("cu").addEventListener("change",function(){set.cur=this.value;saveSet();apply()});
+document.getElementById("f").addEventListener("submit",function(e){e.preventDefault();
+if(!pro()&&items.length>=CFG.FREE){document.getElementById("up").classList.add("on");document.getElementById("up").scrollIntoView({behavior:"smooth",block:"center"});return}
+items.push({name:n.value.trim(),date:d.value,cat:c.value,cost:parseFloat(m.value)||0,rep:parseInt(r.value)});
+save();this.reset();render()});
+document.getElementById("list").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
+var i=+b.dataset.i,it=items[i];
+if(b.dataset.a==="renew")it.date=addM(it.date,it.rep);else items.splice(i,1);
+save();render()});
+async function sha(s){var b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s.trim().toUpperCase()));return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,"0")}).join("")}
+document.getElementById("act").addEventListener("click",async function(){var cm=document.getElementById("cm");try{var h=await sha(document.getElementById("cd").value);var dd=CFG.CODES.indexOf(h)>=0?30:CFG.CODESY.indexOf(h)>=0?365:0;if(dd){try{localStorage.setItem("aplt-pro",String(Date.now()+dd*864e5))}catch(e){}cm.textContent="";render()}else cm.textContent=tr("bad")}catch(e){cm.textContent=tr("bad")}});
+async function initSync(){try{var u=await window.claude.use("user"),db=await window.claude.use("db");if(!u||!db)return;var uid=await u.id();if(!uid)return;
+ref=db.collection("data/users/"+uid).doc("items");var s=await ref.get(),seen=null;
+try{seen=localStorage.getItem("aplt-sync")}catch(e){}
+if(s.exists){var r=JSON.parse(s.data().json||"[]");if(seen)items=r;else r.forEach(function(x){if(!items.some(function(y){return y.name===x.name&&y.date===x.date}))items.push(x)})}
+try{localStorage.setItem("aplt-sync","1")}catch(e){}
+synced=true;save();apply()}catch(e){}}
+apply();
+initSync();
+</script>
+</body>
+</html>

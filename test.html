@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Test</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.js"></script>
+<style>body{font-family:sans-serif;padding:16px;max-width:600px;margin:auto}input,button{display:block;width:100%;padding:10px;margin:8px 0;font-size:16px}pre{white-space:pre-wrap;word-break:break-word;background:#eee;padding:10px;font-size:12px;color:#000}</style></head><body>
+<h3>Test connexion</h3>
+<input id="e" type="email" placeholder="Email">
+<input id="p" type="password" placeholder="Mot de passe">
+<button id="b">Lancer le test</button>
+<pre id="o"></pre>
+<script>
+var sb=window.supabase.createClient("https://ztolwbgwzrufizoyyszj.supabase.co","sb_publishable_4yI3uOfXWx6CJpTu3BCknw_Dq1EIttC");
+var out=document.getElementById("o");
+function log(t,x){out.textContent+=t+": "+JSON.stringify(x,null,1)+"\n\n"}
+document.getElementById("b").onclick=async function(){
+out.textContent="";
+var a=await sb.auth.signInWithPassword({email:document.getElementById("e").value.trim(),password:document.getElementById("p").value});
+log("1 connexion",{error:a.error&&a.error.message,user:a.data&&a.data.user&&a.data.user.id});
+if(a.error)return;
+var s1=await sb.from("deadlines").select("*");log("2 lecture echeances",{error:s1.error,rows:s1.data&&s1.data.length});
+var s2=await sb.from("profiles").select("*");log("3 lecture profil",{error:s2.error,data:s2.data});
+var i=await sb.from("deadlines").insert({name:"TEST",due_date:"2026-12-01",category:"aut",monthly_cost:0,repeat_months:0});
+log("4 ajout",{error:i.error,status:i.status,statusText:i.statusText});
+var s3=await sb.from("deadlines").select("*");log("5 relecture",{error:s3.error,rows:s3.data&&s3.data.length});
+};
+</script></body></html>
